@@ -1,0 +1,38 @@
+#3 nodes for this job 
+#PBS -lnodes=1:cores16:ppn=15
+#1 hour for this job
+#PBS -lwalltime=60:00
+
+
+#mkdir -p /tmp/openfmri/dataset$PBS_ARRAYID
+
+printf -v DATA_DIR '/tmp/openfmri/dataset%03d' $PBS_ARRAYID
+
+mkdir -p $DATA_DIR
+
+
+
+#cd /tmp/openfmri/dataset$PBS_ARRAYID
+
+printf -v CURL_DIR 'http://openfmri.s3.amazonaws.com/tarballs/ds%03d_raw.tgz' $PBS_ARRAYID
+
+printf -v TAR_DIR '/tmp/openfmri/dataset%03d/ds%03d_raw.tgz' $PBS_ARRAYID $PBS_ARRAYID
+
+curl -o $TAR_DIR  $CURL_DIR 
+
+tar -C $DATA_DIR -zxvf $TAR_DIR #$DATA_DIR/ds%03d_raw.tgz $PBS_ARRAYID
+
+printf -v INPUT_DIR '/tmp/openfmri/dataset%03d/ds%03d' $PBS_ARRAYID $PBS_ARRAYID
+
+printf -v WORK_DIR '/tmp/openfmri/workflow%03d' $PBS_ARRAYID
+
+
+/home/fciccone/fmri_openfmri.py -d $INPUT_DIR  -w $WORK_DIR
+
+printf -v RESULT_DIR '/home/fciccone/results/ds%03d'  $PBS_ARRAYID
+
+#printf -v OUT_DIR '/tmp/openfmri/workflow%03d/output' $PBS_ARRAYID
+ 
+mkdir $RESULT_DIR
+
+mv -t $RESULT_DIR $WORK_DIR/output
