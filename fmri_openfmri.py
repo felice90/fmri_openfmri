@@ -422,7 +422,7 @@ def analyze_openfmri_dataset(data_dir, subject=None, model_id=None,
     modelspec.inputs.high_pass_filter_cutoff = hpcutoff
     modelfit.inputs.inputspec.bases = {'dgamma': {'derivs': True}}
     modelfit.inputs.inputspec.model_serial_correlations = True
-    modelfit.inputs.inputspec.film_threshold = 1000
+    modelfit.inputs.inputspec.film_threshold = -1000  #try to put "-"
 
     datasink.inputs.base_directory = output_dir
     return wf
